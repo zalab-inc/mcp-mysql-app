@@ -1,7 +1,11 @@
+// Load environment variables first
+import dotenv from "dotenv";
+dotenv.config();
+
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { registerTool, enhanceMcpServer } from "./libs/tool-utils.js";
-import { MySQLCheckConnection, MySQLQuery } from "./tools/mysql-tool.js";
+import { registerTool, enhanceMcpServer } from "./libs/tool-register.js";
+import { AddTodoToPlan, AskWulang, CreatePlan, DoResearchOnUncertainty, DoTodo, GetAllPlans, GetDetailedPlan, ImprovePlan, ReportTodo, UpdateUncertaintyConfidence } from "./tools/plan.js";
 
 /**
  * Initialize and start the MCP server
@@ -10,7 +14,7 @@ async function main(): Promise<void> {
   try {
     // Create server instance
     const server = new McpServer({
-      name: "mcp-mysql-app",
+      name: "mcp-planner",
       version: "0.0.1",
     });
 
@@ -19,8 +23,16 @@ async function main(): Promise<void> {
 
     // Register all tools
     registerTool(server, [
-      MySQLCheckConnection,
-      MySQLQuery,
+      AskWulang,
+      CreatePlan,
+      GetAllPlans,
+      GetDetailedPlan,
+      UpdateUncertaintyConfidence,
+      DoResearchOnUncertainty,
+      ImprovePlan,
+      AddTodoToPlan,
+      DoTodo,
+      ReportTodo,
     ]);
 
     // Connect to stdio transport

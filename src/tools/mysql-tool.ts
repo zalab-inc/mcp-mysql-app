@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createSafeTool, ToolResponse } from "../libs/tool-utils.js";
+import { createSafeTool, ToolResponse } from "../libs/tool-register.js";
 import { createConnection } from "mysql2/promise";
 import dotenv from "dotenv";
 dotenv.config();

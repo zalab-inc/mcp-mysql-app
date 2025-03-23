@@ -247,6 +247,7 @@ export const DoResearchOnUncertainty = createSafeTool({
 const ImprovePlanSchema = z.object({
   planId: z.number().describe("The id of the plan"),
   description: z.string().describe("The Improved plan description after the uncertainty is resolved"),
+  isAllResolved: z.boolean().describe("Whether all uncertainties are resolved, the threshold is 95%"),
 });
 
 export const ImprovePlan = createSafeTool({
@@ -254,6 +255,14 @@ export const ImprovePlan = createSafeTool({
   description: "Make sure the plan is improved after the uncertainty is resolved",
   schema: ImprovePlanSchema.shape,
   handler: async (input: z.infer<typeof ImprovePlanSchema>) => {
+    if (!input.isAllResolved) {
+      return {
+        content: [{
+          type: "text",
+          text: `You don't allow to do next step, because the uncertainty is not resolved, the threshold is 95%. please do research on the uncertainty again, then come back to me`
+        }],
+      };
+    }
     const plan = await prisma.plan.update({
       where: {
         planId: input.planId,
