@@ -1,0 +1,70 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum PlanStatus {
+  ACTIVE
+  FINISHED
+}
+
+model Plan {
+  planId Int @id @default(autoincrement())
+  name String
+  description String? @db.Text
+  status PlanStatus @default(ACTIVE)
+
+  // Confidence
+  confident Int
+  uncertainties Uncertainty[]
+  todos Todo[]
+
+  @@map("plan")
+}
+
+model Uncertainty {
+  uncertaintyId Int @id @default(autoincrement())
+  description String? @db.Text
+  confidence Int
+
+  actionsToResolve String? @db.Text
+  actionsResult String? @db.Text
+
+  planId Int
+  plan Plan @relation(fields: [planId], references: [planId])
+
+  @@map("uncertainty")
+}
+
+
+model Todo {
+  todoId Int @id @default(autoincrement())
+  description String @db.Text
+  status TodoStatus @default(TODO)
+  priority TodoPriority @default(MEDIUM)
+  report String? @db.Text
+
+  planId Int
+  plan Plan @relation(fields: [planId], references: [planId])
+
+  @@map("todo")
+}
+
+enum TodoStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+  HAS_ISSUE
+}
+
+
+enum TodoPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
